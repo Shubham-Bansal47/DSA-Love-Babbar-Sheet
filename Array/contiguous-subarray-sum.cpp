@@ -15,5 +15,15 @@ int main()
     {
         cin>>arr[i];
     }
-    
+    int sum=0,max1=arr[0];
+    for(i=0; i<n; i++)
+    {
+        sum+=arr[i];
+        max1=max(sum,max1);
+        if(sum<0)
+        {
+            sum=0;
+        }
+    }
+    cout<<max1;
 }
