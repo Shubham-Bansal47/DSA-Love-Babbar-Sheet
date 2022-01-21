@@ -7,6 +7,7 @@ using namespace std;
 
 int main()
 {
+    
     FastIO;
     int i,j,n,temp;
     cin>>n;
