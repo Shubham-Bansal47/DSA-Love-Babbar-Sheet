@@ -1,5 +1,4 @@
 import os
-
 dir_path = r'F:\DSA\LoveBabbarSheet'
 file_extenstion = '.exe' # You can change it based on your need. 
 
