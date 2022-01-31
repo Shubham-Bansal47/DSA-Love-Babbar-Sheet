@@ -14,17 +14,33 @@ struct List
 struct List *deletion(struct List *head,int y)
 {
     struct List *ptr,*ptr1;
-    if(head==NULL)
-    {
-        return NULL;
-    }
     ptr=head;
     ptr1=head;
-    if(y==1)
+    if(y==1)                // 1 2 3 4
     {
         struct List *ptr2;
-        ptr2=ptr1->next;
-            
+        ptr2=ptr->next;
+        while(ptr->next!=head)
+        {
+            ptr=ptr->next;
+        }
+        ptr->next=ptr2;
+        head=ptr2;
+        free(ptr1);
+        return head;
+    }
+    else
+    {
+        struct List *ptr2;
+        y-=2;
+        while(y--)
+        {
+            ptr=ptr->next;
+        }
+        ptr2=ptr->next;
+        ptr->next=ptr2->next;
+        free(ptr2);
+        return head;
     }
 }
 
@@ -32,11 +48,12 @@ void display(struct List* head)
 {
     struct List *ptr;
     ptr=head;
-    while(ptr!=NULL)
+    do
     {
         cout<<ptr->val<<" ";
         ptr=ptr->next;
-    }
+    }while(ptr!=head);
+    cout<<ptr->val;
 }
 
 int main()
