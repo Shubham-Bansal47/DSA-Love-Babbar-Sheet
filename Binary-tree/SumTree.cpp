@@ -2,13 +2,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-/* A binary tree node has data, pointer to left child
-   and a pointer to right child */
 struct Node
 {
     int data;
-    struct Node* left;
-    struct Node* right;
+    struct Node *left;
+    struct Node *right;
 };
 // Utility function to create a new Tree Node
 Node* newNode(int val)
@@ -20,75 +18,6 @@ Node* newNode(int val)
     
     return temp;
 }
-
- // } Driver Code Ends
-/* A binary tree Node
-
-struct Node
-{
-    int data;
-    struct Node* left;
-    struct Node* right;
-    
-    Node(int x){
-        data = x;
-        left = right = NULL;
-    }
-};
- */
-
-
-class Solution
-{
-    public:
-    //Function to return the level order traversal of a tree.
-    vector<int> levelOrder(Node* node)
-    {
-      vector<int> ans;
-      if(node==NULL)
-      {
-          return ans;
-      }
-      queue<Node*> q;
-      q.push(node);
-      while(!q.empty())
-      {
-          int size=q.size();
-          for(int i=0; i<size; i++)
-          {
-            Node* current=q.front();
-            q.pop();
-            if(current->left!=NULL)
-            {
-                q.push(current->left);
-            }
-            if(current->right!=NULL)
-            {
-                q.push(current->right);
-            }
-            ans.push_back(current->data);
-          }
-      }
-      return ans;
-    }
-};
-
-// { Driver Code Starts.
-
-/* Helper function to test mirror(). Given a binary
-   search tree, print out its data elements in
-   increasing sorted order.*/
-void inOrder(struct Node* node)
-{
-  if (node == NULL)
-    return;
-
-  inOrder(node->left);
-  printf("%d ", node->data);
-
-  inOrder(node->right);
-}
-
 // Function to Build Tree
 Node* buildTree(string str)
 {   
@@ -153,23 +82,72 @@ Node* buildTree(string str)
     return root;
 }
 
-/* Driver program to test size function*/
+
+ // } Driver Code Ends
+/*  Tree node
+struct Node
+{
+    int data;
+    Node* left, * right;
+}; */
+
+// Should return true if tree is Sum Tree, else false
+class Solution
+{
+    public:
+    pair<bool,int> check(Node* root)
+    {
+        if(root==NULL)
+        {
+            pair<bool,int> ans=make_pair(true,0);
+            return ans;
+        }
+        
+        if(root->left==NULL && root->right==NULL)
+        {
+            pair<bool,int> ans=make_pair(true,root->data);
+            return ans;
+        }
+        
+        pair<bool,int> left=check(root->left);
+        pair<bool,int> right=check(root->right);
+        
+        bool ch = (root->data)==(left.second+right.second);
+        pair<bool,int> ans;
+        if(left.first && right.first && ch)
+        {
+            ans.first=true;
+            ans.second=2*root->data;
+            return ans;
+        }
+        else
+        {
+            ans.first=false;
+        }
+        
+        return ans;
+    }
+    
+    bool isSumTree(Node* root)
+    {
+         return check(root).first;
+    }
+};
+
+// { Driver Code Starts.
+
 int main()
 {
-  int t;
-  scanf("%d ",&t);
-  while (t--)
-  {
+
+    int t;
+	scanf("%d ",&t);
+    while(t--)
+    {
         string s;
 		getline(cin,s);
-		Node* root = buildTree(s);
-		Solution ob;
-        vector <int> res = ob.levelOrder(root);
-        for (int i : res) cout << i << " ";
-        cout << endl;
-  }
-  return 0;
-}
-
-
-  // } Driver Code Ends
+        Node* root = buildTree(s);
+        Solution ob;
+        cout <<ob.isSumTree(root) << endl;
+    }
+    return 1;
+}  // } Driver Code Ends
