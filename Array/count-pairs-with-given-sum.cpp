@@ -12,11 +12,11 @@ int main()
     int i,j,n,k,sum=0;
     cin>>n>>k;
     int arr[n];
+    unordered_map<int,int> m;
     for(i=0; i<n; i++)
     {
         cin>>arr[i];
     }
-    unordered_map<int,int> m;
     for(i=0; i<n; i++)
     {
         if(m[k-arr[i]]>0)
