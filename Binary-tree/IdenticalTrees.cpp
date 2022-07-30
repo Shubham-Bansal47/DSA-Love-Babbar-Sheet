@@ -15,29 +15,29 @@ struct TreeNode{
 };
 
 bool inorder(TreeNode* p,TreeNode* q)
+{
+    if(p==NULL && q==NULL)
     {
-        if(p==NULL && q==NULL)
-        {
-            return 1;
-        }
-        else if((p!=NULL && q==NULL) || (p==NULL && q!=NULL))
-        {
-            return 0;
-        }
-        
-        bool left=inorder(p->left,q->left);
-        bool right=inorder(p->right,q->right);
-        bool check= p->data==q->data;
-        if(left && right && check)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
+        return true;
+    }
+    else if((p!=NULL && q==NULL) || (p==NULL && q!=NULL))
+    {
+        return false;
     }
     
-    bool isSameTree(TreeNode* p, TreeNode* q) {
-        return inorder(p,q);
+    bool left=inorder(p->left,q->left);
+    bool right=inorder(p->right,q->right);
+    bool check = (p->data==q->data);
+    if(left && right && check)
+    {
+        return true;
     }
+    else
+    {
+        return false;
+    }
+}
+
+bool isSameTree(TreeNode* p, TreeNode* q) {
+    return inorder(p,q);
+}

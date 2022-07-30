@@ -19,8 +19,8 @@ struct List *reverse(struct List* head,int k)
     int x=0;
     while(ptr1!=NULL && x<k)
     {
-        ptr2=ptr1->next;
-        ptr1->next=ptr;
+        ptr2=ptr1->next;             // 1 2 3 4 5 6 
+        ptr1->next=ptr;              // 2 1 4 3 6 5
         ptr=ptr1;
         ptr1=ptr2;
         ++x;

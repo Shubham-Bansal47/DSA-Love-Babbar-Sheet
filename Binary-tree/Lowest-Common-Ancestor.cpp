@@ -37,18 +37,16 @@ Node* LCA(Node *root,int n1,int n2)
     if(leftans!=NULL && rightans!=NULL){
         return root;
     }
-
-    if(leftans==NULL || rightans==NULL){
+    else if(leftans==NULL || rightans==NULL){
         return NULL;    
     }
-
-    if(leftans!=NULL)
+    else if(leftans!=NULL)
     {
-        return LCA(root->left,n1,n2);
+        return leftans;
     }
     else
     {
-        return LCA(root->right,n1,n2);
+        return rightans;
     }
 }
 

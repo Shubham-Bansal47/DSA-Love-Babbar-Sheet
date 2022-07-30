@@ -1,119 +1,124 @@
 #include<bits/stdc++.h>
-#define ll long long int
-#define FastIO ios_base::sync_with_stdio(false);
-#define gcd(a,b) __gcd(a,b)
-#define lcm(a,b) (a*b)/gcd(a,b)
 using namespace std;
 
-struct List
-{
-    int val;
-    struct List* next;
+struct Node{
+    int data;
+    Node* next;
+
+    Node(int val)
+    {
+        data=val;
+        next=NULL;
+    }
 };
 
-struct List* addTwoLists(struct List* first, struct List* second)
+Node* createlist(Node* head,Node* tail)
+{
+    cout<<"Enter the Data"<<endl;
+    int val;
+    cin>>val;
+    while(val!=-1)
     {
-        struct List *ptr,*ptr1;
-        ll x=0,y=0;
-        ptr=first;
-        ptr1=second;
-        while(ptr!=NULL)
+        Node* temp=new Node(val);
+        if(head==NULL)
         {
-            x=x*10+(ptr->val);
-            ptr=ptr->next;
+            head=temp;
+            tail=temp;
         }
-        while(ptr1!=NULL)
+        else
         {
-            y=y*10+(ptr1->val);
-            ptr1=ptr1->next;
+            tail->next=temp;
+            tail=tail->next;
         }
-        x=x+y;
-        vector<int> vec;
-        while(x>0)
-        {
-            y=x%10;
-            vec.push_back(y);
-            x=x/10;
-        }
-        reverse(vec.begin(),vec.end());
-        y=vec.size();
-        ptr=NULL;
-        x=0;
-        while(x<vec.size())
-        {
-            struct List *ptr2;
-            ptr2=(struct List *)malloc(sizeof(struct List));
-            ptr2->next=NULL;
-            ptr2->val=vec[x];
-            if(ptr==NULL)
-            {
-                ptr=ptr2;
-                ptr1=ptr2;
-            }
-            else
-            {
-                ptr1->next=ptr2;
-                ptr1=ptr1->next;
-            }
-        ++x;    
-        }
-        return ptr;
+        cin>>val;
+    }
+    return head;
+}
+
+Node* reverse(Node* head)
+{
+    Node *prev,*curr;
+    prev=NULL;
+    curr=head;
+    while(curr!=NULL)
+    {
+        Node *frd;
+        frd=curr->next;
+        curr->next=prev;
+        prev=curr;
+        curr=frd;
     }
 
-void display(struct List* head)
+    return prev;
+}
+
+void insertnode(Node* &anshead,Node* &anstail,int digit)
 {
-    struct List *ptr;
-    ptr=head;
-    while(ptr!=NULL)
+    Node* temp=new Node(digit);
+    if(anshead==NULL)
     {
-        cout<<ptr->val<<" ";
-        ptr=ptr->next;
+        anshead=temp;
+        anstail=temp;
     }
+    else
+    {
+        anstail->next=temp;
+        anstail=anstail->next;
+    }
+    return;
+}
+
+Node* addthem(Node* head1,Node* head2)
+{
+    Node *anshead=NULL;
+    Node *anstail=NULL;
+    int carry=0;
+    while(head1!=NULL || head2!=NULL || carry!=0)
+    {
+        int val1=0;
+        if(head1!=NULL)
+        {
+            val1=head1->data;
+        }
+        int val2=0;
+        if(head2!=NULL)
+        {
+            val2=head2->data;
+        }
+        int sum=val1 + val2 + carry;
+        int digit=sum%10;
+        insertnode(anshead,anstail,digit);
+        carry=sum/10;
+        if(head1!=NULL)
+        {
+            head1=head1->next;
+        }
+        if(head2!=NULL)
+        {
+            head2=head2->next;
+        }
+    }
+    return anshead;
 }
 
 int main()
 {
-    FastIO;
-    int i,j,n,m,x;
-    cin>>n>>m;
-    struct List *start,*start1,*ptr,*ptr1;
-    start=NULL;
-    start1=NULL;
-    x=n;
-    while(n--)
+    Node *head1,*tail1,*head2,*tail2;
+    head1=NULL;
+    tail1=NULL;
+    head2=NULL;
+    tail2=NULL;
+    head1=createlist(head1,tail1);
+    head2=createlist(head2,tail2);
+    head1=reverse(head1);
+    head2=reverse(head2);
+    Node* temp=addthem(head1,head2);
+    temp=reverse(temp);
+    while(temp!=NULL)
     {
-        struct List *newnode,*trav;
-        newnode=(struct List*)malloc(sizeof(struct List));
-        cin>>newnode->val;
-        newnode->next=NULL;
-        if(start==NULL)
-        {
-            start=newnode;
-            trav=newnode;
-        }
-        else
-        {
-            trav->next=newnode;
-            trav=trav->next;
-        }
+        cout<<temp->data<<" ";
+        temp=temp->next;
     }
-    while(m--)
-    {
-        struct List *newnode,*trav;
-        newnode=(struct List*)malloc(sizeof(struct List));
-        cin>>newnode->val;
-        newnode->next=NULL;
-        if(start1==NULL)
-        {
-            start1=newnode;
-            trav=newnode;
-        }
-        else
-        {
-            trav->next=newnode;
-            trav=trav->next;
-        }
-    }
-    start=addTwoLists(start,start1);
-    display(start);
+
+    return 0;
 }

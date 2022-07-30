@@ -242,14 +242,7 @@ void verticalordertrav(struct Node* root)
             q.push({curr->right,{hd+1,lvl+1}});
         }
     }
-
-    // for(auto i: m)
-    // {
-    //     for(int j=0; j<i.second.size(); j++)
-    //     {
-    //         cout<<i.second[j]<<" ";
-    //     }
-    // }
+    
     for(auto& i: m)
     {
         for(auto& j: i.second)
