@@ -11,7 +11,7 @@ struct List
     struct List* next;
 };
 
-bool isCircular(struct List *head)
+bool isCircular(struct List *head) // use slow and fast pointer approach here
 {
     struct List *ptr;
     ptr=head;

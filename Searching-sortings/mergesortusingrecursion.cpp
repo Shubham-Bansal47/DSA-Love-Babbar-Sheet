@@ -76,3 +76,85 @@ int main() {
 
     return 0;
 }
+
+//
+// #include <bits/stdc++.h>
+// using namespace std;
+
+// void merge(vector<int>& vec,int start,int end)
+// {
+//     int mid=start+(end-start)/2;
+//     int l1=mid+1-start;
+//     int l2=end-mid;
+    
+//     vector<int> temp1(l1);
+//     vector<int> temp2(l2);
+//     int count=0;
+    
+//     for(int i=start; i<=mid; i++){
+//         temp1[count++]=vec[i];
+//     }
+    
+//     count=0;
+    
+//     for(int i=mid+1; i<=end; i++){
+//         temp2[count++]=vec[i];
+//     }
+    
+//     int c1=0;
+//     int c2=0;
+//     count=start;
+    
+//     while(c1<l1 && c2<l2){
+//         if(temp1[c1]<temp2[c2]){
+//             vec[start++]=temp1[c1++];
+//         }
+//         else if(temp2[c2]<temp1[c1]){
+//             vec[start++]=temp2[c2++];
+//         }
+//         else{
+//             vec[start++]=temp1[c1++];
+//             vec[start++]=temp2[c2++];
+//         }
+//     }
+//     while(c1<l1){
+//         vec[start++]=temp1[c1++];
+//     }
+//     while(c2<l2){
+//         vec[start++]=temp2[c2++];
+//     }
+    
+//     return;
+// }
+
+// void solve(vector<int>& vec,int s,int e)
+// {
+//     if(s>=e){
+//         return;
+//     }
+    
+//     int mid=s+(e-s)/2;
+//     solve(vec,s,mid);
+//     solve(vec,mid+1,e);
+//     merge(vec,s,e);
+    
+//     return;
+// }
+
+// int main() {
+//     int n;
+//     cin>>n;
+//     vector<int> vec(n);
+//     for(int i=0; i<n; i++){
+//         cin>>vec[i];
+//     }
+//     int s,e;
+//     s=0;
+//     e=n-1;
+//     solve(vec,s,e);
+//     for(int i=0; i<n; i++){
+//         cout<<vec[i]<<" ";
+//     }
+
+//     return 0;
+// }

@@ -27,7 +27,7 @@ struct List *reverse(struct List* head,int k)
     }
     if(ptr2!=NULL)
     {
-        head->next=reverse(ptr2,k);
+        head->next=reverse(ptr2,k); // recursion
     }
     return ptr;
 }

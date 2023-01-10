@@ -11,7 +11,7 @@ struct List
     struct List* next;
 };
 
-struct List* middleNode(struct List* head) 
+struct List* middleNode(struct List* head)  // use fast and slow pointer approach
 {
         int i,j,count=0;
         struct List *ptr;

@@ -1,10 +1,10 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-class graphcreate{
+class Graph{
     
     private:
-    map<int,list<int>> m;
+    unordered_map<int,vector<int>> m;
 
     public:
     void addedge(int u,int v,int direction)
@@ -32,7 +32,7 @@ class graphcreate{
 
 int main()
 {
-    graphcreate g;
+    Graph g;
     int n;
     cout<<"Enter number of nodes"<<endl;
     cin>>n;

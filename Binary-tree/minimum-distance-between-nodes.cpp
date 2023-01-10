@@ -84,19 +84,9 @@ Node* buildTree(string str) {
     return root;
 }
 
-
- // } Driver Code Ends
-/* A binary tree node
-struct Node
-{
-    int data;
-    Node* left, * right;
-}; */
-
 class Solution{
     public:
-    /* Should return minimum distance between a and b
-    in a tree with given root*/
+    
     Node* LCA(Node* root,int a,int b)
     {
         if(root==NULL)

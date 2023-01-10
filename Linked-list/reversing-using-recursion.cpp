@@ -25,6 +25,31 @@ struct List *reverse(struct List* head)
     return ptr;
 }
 
+struct List* reverse1(struct List* head)
+{
+    if(head==NULL || head->next==NULL)
+        return head;
+    
+    struct List *ptr,*ptr1;
+    ptr=NULL;
+    ptr1=head;
+    int x=0;
+    while(ptr1!=NULL && x<1)
+    {
+        struct List* ptr2;
+        ptr2=ptr1->next;
+        ptr1->next=ptr;
+        ptr=ptr1;
+        ptr1=ptr2;
+        ++x;
+    }
+    if(ptr1!=NULL)
+    {
+        head->next=reverse1(ptr1);
+    }
+    return ptr;
+}
+
 int main()
 {
     FastIO;
@@ -54,7 +79,7 @@ int main()
         cout<<start->val;
         return 0;
     }
-    start=reverse(start);
+    start=reverse1(start);
     ptr=start;
     while(ptr!=NULL)
     {
