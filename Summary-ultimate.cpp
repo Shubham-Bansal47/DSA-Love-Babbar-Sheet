@@ -1,67 +1,4 @@
-#include<bits/stdc++.h> //god directory
-using namespace std;
-//header file
-/* 
-#include<iostream>
-#include<queue>
-#include<stack>
-#include<map> 
-#include<unordered_map>
-#include<set>
-*/
 
-//macros
-/*
-#define pi 3.14
-*/
-
-//data types
-/* 
-int 4 byte = 32 bit
-char 1 byte = 8 bit
-bool 1 bit
-float 8 byte
-double 8 byte
-*/
-
-//typecasting
-/*
-int x='a';
-cout<<x; gives 97 as output (ascii table output)
-
-char ch=97;
-cout<<ch; gives a as output
-*/
-
-//division game
-/*
-int/int = int
-double/int = double
-float/int = float
-*/
-
-// Loops
-/*
-for(int a=0, b=1; a<n && b<=n; a++,b++) syntax for double parameters
-*/
-
-//Patterns
-//ternary operator 
-/*
-bool check=true;
-int name;
-name=check ? 5 : 0; (syntax)
-*/
-
-//bitwise operators
-/*
-not operator = ~
-xor = ^
-and = &
-or = |
-left shift 5<<1  ->before 000101 after 001010 
-right shift 5>>1  ->before 000101 after 000010 
-*/
 int factorial(int n)
 {
     if(n==1 || n==0)
@@ -988,26 +925,18 @@ void ReverseStackUsingRecursion(stack<int> &st)
     return;
 }
 
-//aise stack questions ka ek hi concept h 
-//pehle sare elements pop karo fir last se sort krna chalu karo jab stack khali ho ya sirf 1 element ho
-void SortStack(stack<int> &st,int x)
+void SortStack(stack<int> &st,int num)
 {
-    if(st.empty())
+    if(st.empty() || st.top()<=num)
     {
-        st.push(x);
+        st.push(num);   
         return;
     }
 
-    int num=st.top();
+    int val=st.top();
     st.pop();
-    if(x>=num)
-    {
-        st.push(num);
-        st.push(x);
-        return;
-    }
-    SortStack(st,x);
-    st.push(num);
+    SortStack(st,num);
+    st.push(val);
     
     return;
 }
@@ -1268,6 +1197,53 @@ void BTPreorderTraversal(NodeBT *root)
     return;
 }
 
+void BTPreorderTraversalUsingStack(NodeBT* root)
+{
+    vector<int> ans;
+    stack<NodeBT*> st;
+    while(1)
+    {
+        if(root!=NULL)
+        {
+            ans.push_back(root->data);
+            st.push(root);
+            root=root->left;
+        }
+        else
+        {
+            if(st.empty())
+                break;
+            NodeBT* temp=st.top();
+            st.pop();
+            root=temp->right;
+        }
+    }
+
+    /* 
+    OR 
+    stack<NodeBT*> st;
+    vector<int> ans;
+    while(!st.empty())
+    {
+        struct NodeBT* curr=st.top();
+        st.pop();
+        ans.push_back(curr->data);
+
+        if(curr->right!=NULL)
+        {
+            st.push(curr->right);
+        }
+        
+        if(curr->left!=NULL)
+        {
+            st.push(curr->left);
+        }
+    }
+    */
+
+    Printvector(ans);
+}
+
 void BTInorderTraversal(NodeBT *root)
 {
     if(root==NULL)
@@ -1284,21 +1260,20 @@ void BTInorderTraversalUsingStack(NodeBT* root)
 {
     stack<NodeBT*> st;
     vector<int> ans;
-    st.push(root);
-    while(!st.empty())
+    while(true)
     {
-        if(root->left!=NULL)
+        if(root!=NULL)
         {
-            root=root->left;
             st.push(root);
+            root=root->left;
         }
         else
         {
-            if(root==NULL)
-                root=st.top();
-            
-            ans.push_back(root->data);
+            if(st.empty())
+                break;
+            root=st.top();
             st.pop();
+            ans.push_back(root->data);
             root=root->right;
         }
     }
@@ -1443,7 +1418,7 @@ pair<int,bool> CheckBalancedBTBest(NodeBT *root)
     return ans;
 }
 
-bool CheckIdenticalTrees(NodeBT *root1,NodeBT* root2)
+bool CheckIdenticalTrees(NodeBT* root1,NodeBT* root2)
 {
     if(root1==NULL && root2==NULL)
         return true;
@@ -1679,9 +1654,8 @@ void BottomViewOfBT(NodeBT* root)
 
     vector<int> ans;
     for(auto i:m)
-    {
         ans.push_back(i.second[i.second.size()-1]);
-    }
+    
 
     Printvector(ans);
 
@@ -2035,6 +2009,542 @@ NodeBT* Merge2BST(vector<int> &inans,int s,int e)
     return root;
 }
 
+void CreateAdjacencyList(map<int,vector<int>>& adjlist,int n,int m,int direction)
+{
+    for(int i=0; i<m; i++)
+    {
+        int x,y;
+        cin>>x>>y;
+        adjlist[x].push_back(y);
+        if(direction==1)
+            adjlist[y].push_back(x);
+    }
+
+    return;
+}
+
+void CreateAdjacencyListWeighted(map<int,vector<pair<int,int>>>& adjlist,int n,int m,int direction)
+{
+    for(int i=0; i<m; i++)
+    {
+        int x,y,w;
+        cin>>x>>y>>w;
+        adjlist[x].push_back({y,w});
+        if(direction==1)
+            adjlist[y].push_back({x,w});
+    }
+
+    return;
+}
+
+void BFSInGraph(map<int,vector<int>>& adjlist,map<int,bool>& vis,vector<int>& ans,int value)
+{
+    queue<int> q;
+    vis[value]=true;
+    q.push(value);
+    while(!q.empty())
+    {
+        int temp=q.front();
+        q.pop();
+        ans.push_back(temp);
+        for(auto i: adjlist[temp])
+        {
+            if(!vis[i])
+            {
+                q.push(i);
+                vis[i]=true;
+            }
+        }
+    }
+
+    return;
+}
+
+void DFSInGraph(map<int,vector<int>>& adjlist,map<int,bool>& vis,vector<int>& ans,int value)
+{
+    vis[value]=true;
+    ans.push_back(value);
+    for(auto i: adjlist[value])
+    {
+        if(!vis[i])
+            DFSInGraph(adjlist,vis,ans,i);
+    }
+
+    return;
+}
+
+bool CycleDetectionUndirectedUsingBFS(map<int,vector<int>>& adjlist,map<int,bool>& vis,int value)
+{
+    queue<pair<int,int>> q;
+    vis[value]=true;
+    q.push({value,-1});
+    while(!q.empty())
+    {
+        int temp=q.front().first;
+        int parent=q.front().second;
+        q.pop();
+        for(auto i: adjlist[temp])
+        {
+            if(!vis[i])
+            {
+                vis[i]=true;
+                q.push({i,temp});
+            }
+            else if(parent!=i)
+                return true;
+            
+        }
+    }
+
+    return false;
+}
+
+bool CycleDetectionUndirectedUsingDFS(map<int,vector<int>>& adjlist,map<int,bool>& vis,int value,int parent)
+{
+    vis[value]=true;
+    for(auto i: adjlist[value])
+    {
+        if(!vis[i])
+            return CycleDetectionUndirectedUsingDFS(adjlist,vis,i,value);
+        else if(parent!=i)
+            return true;
+    }
+
+    return false;
+}
+
+bool CycleDetectionDirectedUsingDFS(map<int,vector<int>>& adjlist,map<int,bool>& vis,map<int,bool>& dfsvis,int value)
+{
+    vis[value]=true;
+    dfsvis[value]=true;
+    for(auto i: adjlist[value])
+    {
+        if(!vis[i])
+            return CycleDetectionDirectedUsingDFS(adjlist,vis,dfsvis,i);
+        else if(dfsvis[i])
+            return true;
+    }
+    dfsvis[value]=false;
+
+    return false;
+}
+
+void TopologicalSortUsingDFS(map<int,vector<int>>& adjlist,map<int,bool>& vis,stack<int>& st,int value)
+{
+    vis[value]=true;
+    for(auto i: adjlist[value])
+    {
+        if(!vis[i])
+            TopologicalSortUsingDFS(adjlist,vis,st,i);
+    }
+    st.push(value);
+
+    return;
+}
+
+void TopologicalSortUsingDFSofWeighted(map<int,vector<pair<int,int>>>& adjlist,vector<bool>& vis,stack<int>& st,int value)
+{
+    vis[value]=true;
+    for(auto i: adjlist[value])
+    {
+        if(!vis[i.first])
+            TopologicalSortUsingDFSofWeighted(adjlist,vis,st,i.first);
+        
+    }
+    st.push(value);
+
+    return;
+}
+
+void TopologicalSortUsingBFS(map<int,vector<int>>& adjlist,int n)
+{
+    queue<int> q;
+    vector<int> indegree(n,0);
+    for(int i=0; i<adjlist.size(); i++)
+    {
+        for(auto j: adjlist[i])
+            indegree[j]++;
+    }
+    for(int i=0; i<indegree.size(); i++)
+    {
+        if(indegree[i]==0)
+            q.push(i);
+    }
+    vector<int> ans;
+    while(!q.empty())
+    {
+        int temp=q.front();
+        q.pop();
+        ans.push_back(temp);
+        for(auto i: adjlist[temp])
+        {
+            indegree[i]--;
+            if(indegree[i]==0)
+                q.push(i);
+        }
+    }
+    Printvector(ans);
+
+    return;
+}
+
+void ShortestPathUndirectedUsingBFS(map<int,vector<int>>& adjlist,map<int,bool>& vis,int source,int destination)
+{
+    vector<int> parent(adjlist.size(),-1);
+    queue<int> q;
+    q.push(0);
+    vis[0]=true;
+    vector<int> ans;
+    while(!q.empty())
+    {
+        int temp=q.front();
+        q.pop();
+        for(auto i: adjlist[temp])
+        {
+            if(!vis[i])
+            {
+                q.push(i);
+                vis[i]=true;
+                parent[i]=temp;
+            }
+        }
+    }
+    int check=destination;
+    ans.push_back(destination);
+    while(check!=parent[source])
+    {
+        ans.push_back(parent[check]);
+        check=parent[check];
+    }
+    ans.pop_back();
+    reverse(ans.begin(),ans.end());
+    Printvector(ans);
+
+    return;
+}
+
+void ShortestPathDirectedAcyclicGraphUsingDFS(map<int,vector<pair<int,int>>>& adjlist,int n,int src)
+{
+    vector<int> distance(n,INT_MAX);
+    vector<bool> vis(n,false);
+    stack<int> st;
+    for(int i=0; i<n; i++)
+    {
+        if(!vis[i])
+            TopologicalSortUsingDFSofWeighted(adjlist,vis,st,i);
+    }
+    distance[src]=0;
+    while(!st.empty())
+    {
+        int top=st.top();
+        st.pop();
+        if(distance[top]==INT_MAX)
+            continue;
+        for(auto i: adjlist[top])
+        {
+            if(distance[i.first]>distance[top]+i.second)
+                distance[i.first]=distance[top]+i.second;
+        }
+    }
+    Printvector(distance);
+
+    return;
+}
+
+void DijkstraAlgorithmUsingSet(map<int,vector<pair<int,int>>>& adjlist,int src)
+{
+    vector<int> dist(adjlist.size(),INT_MAX);
+    set<pair<int,int>> se;
+    se.insert({0,src});
+    dist[src]=0;
+    while(!se.empty())
+    {
+        int node=se.begin()->second;
+        int distance=se.begin()->first;
+        se.erase(se.begin());
+        if(dist[node]==INT_MAX)
+            continue;
+        for(auto i: adjlist[node])
+        {
+            int tempdist=i.second;
+            int tempnode=i.first;
+            if(dist[tempnode]>dist[node]+tempdist)
+            {
+                auto record=se.find({dist[tempnode],tempnode});
+                if(record!=se.end())
+                    se.erase(record);
+                dist[tempnode]=dist[node]+tempdist;
+                se.insert({dist[tempnode],tempnode});
+            }
+        }
+    }
+    Printvector(dist);
+
+    return;
+}
+
+void DijkstraAlgorithmUsingPriorityQueue(map<int,vector<pair<int,int>>>& adjlist,int src)
+{
+    vector<int> dist(adjlist.size(),INT_MAX);
+    priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> q;
+    dist[src]=0;
+    q.push({0,src});
+    while(!q.empty())
+    {
+        int node=q.top().second;
+        int distance=q.top().first;
+        q.pop();
+        if(dist[node]==INT_MAX)
+            continue;
+        for(auto i: adjlist[node])
+        {
+            int tempnode=i.first;
+            int tempdist=i.second;
+            if(dist[tempnode]>dist[node]+tempdist)
+            {
+                dist[tempnode]=dist[node]+tempdist;
+                q.push({dist[tempnode],tempnode});
+            }   
+        }
+    }
+    Printvector(dist);
+
+    return;
+}
+
+void PrintAdjacencyList(map<int,vector<int>>& adjlist,int n)
+{
+    for(int i=0; i<n; i++)
+    {
+        cout<<i<<"-> ";
+        for(auto j:adjlist[i])
+            cout<<j<<", ";
+        
+        cout<<endl;
+    }
+
+    return;
+}
+
+void PrintAdjacencyListWeighted(map<int,vector<pair<int,int>>>& adjlist,int n)
+{
+    for(int i=0; i<n; i++)
+    {
+        cout<<i<<"-> ";
+        for(auto j: adjlist[i])
+            cout<<"("<<j.first<<","<<j.second<<")"<<", ";
+        
+        cout<<endl;
+    }
+
+    return;
+}
+
+int DPZeroOneKnapsack(vector<int>& wt,vector<int>& val,int w,int n,vector<vector<int>>& dp)
+{
+    if(w==0 || n==0)
+        return 0;
+    
+    if(dp[n][w]!=-1)
+        return dp[n][w];
+
+    if(wt[n-1]<=w)
+        dp[n][w]=max((val[n-1]+DPZeroOneKnapsack(wt,val,w-wt[n-1],n-1,dp)),DPZeroOneKnapsack(wt,val,w,n-1,dp));
+    else
+        dp[n][w]=DPZeroOneKnapsack(wt,val,w,n-1,dp);
+
+    return dp[n][w]; 
+}
+
+bool DPSubsetSumProblem(int n,int sum,vector<int>& vec,vector<vector<int>>& dp)
+{
+    if(sum==0)
+        return true;
+    if(n<0)
+        return false;
+    
+    if(dp[sum][n]!=-1)
+        return dp[sum][n];
+
+    if(vec[n]<=sum)
+        dp[sum][n]=DPSubsetSumProblem(n-1,sum-vec[n],vec,dp) || DPSubsetSumProblem(n-1,sum,vec,dp);
+    else
+        dp[sum][n]=DPSubsetSumProblem(n-1,sum,vec,dp);
+
+    return dp[sum][n];
+}
+
+bool DPEqualSumPartition(vector<int> vec,vector<vector<int>> &dp,int &sum,int n,int temp)
+{
+    if(n<0)
+        return false;
+    if(temp==sum-temp)
+        return true;
+
+    if(dp[temp][n]!=-1)
+        return dp[temp][n];
+
+    if(vec[n]>sum-temp)
+        dp[temp][n] = DPEqualSumPartition(vec,dp,sum,n-1,temp);
+    else 
+        dp[temp][n] = DPEqualSumPartition(vec,dp,sum,n-1,temp+vec[n]) || DPEqualSumPartition(vec,dp,sum,n-1,temp);
+
+    return dp[temp][n];
+}
+
+int DPCountSubsetSum(vector<int> &vec,vector<vector<int>> &dp, int n, int sum)
+{
+    dp[0][0] = 1;
+    for (int i = 1; i <= sum; i++)
+        dp[0][i] = 0;
+        
+    
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 0; j <= sum; j++)
+        {
+            // if the value is greater than the sum
+            if (vec[i - 1] > j)
+                dp[i][j] = dp[i - 1][j]%1000000007;
+            else
+            {
+                dp[i][j] = (dp[i - 1][j] + dp[i - 1][j - vec[i - 1]])%1000000007;
+            }
+        }
+    }
+    
+    
+    return dp[n][sum];
+}
+
+void DPMinimumSubsetSumDifference(vector<int> &vec,vector<vector<int>> &dp,int n,int &sum,int &ans,int temp)
+{
+    if(n<0)
+        return;
+
+    if((abs(sum-(2*temp)))<ans)
+        ans=abs(sum-(2*temp));
+
+    if(dp[n][temp]!=-1)
+        return;
+
+    if(vec[n]>sum-temp)
+        DPMinimumSubsetSumDifference(vec,dp,n-1,sum,ans,temp);
+    else
+        DPMinimumSubsetSumDifference(vec,dp,n-1,sum,ans,temp+vec[n]);
+        DPMinimumSubsetSumDifference(vec,dp,n-1,sum,ans,temp);
+
+    return;
+}
+
+int RodCuttingDP(vector<int>& price,vector<int>& length, int n,int sum,vector<vector<int>>& dp)
+{
+    if(sum==0)
+        return 0;
+    if(sum<0 || n<0)
+        return INT_MIN;
+        
+    if(dp[n][sum]!=-1)
+        return dp[n][sum];
+        
+    if(length[n]>sum)
+        dp[n][sum]=RodCuttingDP(price,length,n-1,sum,dp);
+    else
+        dp[n][sum]=max(RodCuttingDP(price,length,n-1,sum,dp),price[n]+RodCuttingDP(price,length,n,sum-length[n],dp));
+        
+    return dp[n][sum];
+}
+
+long long int CoinChangeWays(int coins[],int n,int sum,vector<vector<long long int>>& dp)
+{
+    if(sum==0)
+        return 1;
+    if(n<0 || sum<0)
+        return 0;
+        
+    if(dp[n][sum]!=-1)
+        return dp[n][sum];
+        
+    if(coins[n]>sum)
+        dp[n][sum]=CoinChangeWays(coins,n-1,sum,dp);
+    else
+        dp[n][sum]=CoinChangeWays(coins,n-1,sum,dp) + CoinChangeWays(coins,n,sum-coins[n],dp);
+        
+    return dp[n][sum];
+}
+
+int MinimumNumberOfCoins(vector<int>& nums,int amount,vector<int>& dp)
+{
+    if(amount==0)
+        return 0;
+    if(amount<0)
+        return INT_MAX;
+    if(dp[amount]!=-1)
+        return dp[amount];
+    
+    int mini=INT_MAX;
+    for(int i=0; i<nums.size(); i++)
+    {
+        if(nums[i]<=amount)
+        {
+            int check=MinimumNumberOfCoins(nums,amount-nums[i],dp);
+            if(check!=INT_MAX)
+                mini=min(mini,1+check);
+        }
+    }
+    dp[amount]=mini;
+    
+    return dp[amount];
+}
+
+int LongestCommonSubsequence(int x,int y,string &s1,string &s2,vector<vector<int>>& dp)
+{
+    if(x==0 || y==0)
+        return 0;
+    
+    if(dp[x][y]!=0)
+        return dp[x][y];
+    
+    if(s1[x-1]==s2[y-1])
+        dp[x][y]=1+LongestCommonSubsequence(x-1,y-1,s1,s2,dp);
+    else
+        dp[x][y]=max( LongestCommonSubsequence(x,y-1,s1,s2,dp) , LongestCommonSubsequence(x-1,y,s1,s2,dp) );
+    
+    return dp[x][y];
+}
+
+int longestCommonSubstring(string &S1, string &S2, int n, int m)
+{
+    int dp[n+1][m+1];
+    int ans=0;
+    for(int i=0; i<=n; i++)
+    {
+        for(int j=0; j<=m; j++)
+        {
+            if(i==0 || j==0)
+                dp[i][j]=0;
+        }
+    }
+    
+    for(int i=1; i<=n; i++)
+    {
+        for(int j=1; j<=m; j++)
+        {
+            if(S1[i-1]==S2[j-1])
+            {
+                dp[i][j]=dp[i-1][j-1]+1;
+                ans=max(ans,dp[i][j]);
+            }
+            else
+            {
+                dp[i][j]=0;
+            }
+        }
+    }
+    
+    return ans;
+}
+
 void PrintLL(Node* temp)
 {
     while(temp!=NULL)
@@ -2044,8 +2554,6 @@ void PrintLL(Node* temp)
     }
     return;
 }
-
-
 
 void PrintCLL(Node* temp)
 {
@@ -2127,7 +2635,7 @@ void PrintStack(stack<int> st)
 {
     while(!st.empty())
     {
-        cout<<st.top()<<endl;
+        cout<<st.top()<<" ";
         st.pop();
     }
     return;
@@ -2142,7 +2650,9 @@ void PrintQueue(queue<int> q)
     }
     return;
 }
-
+/*.......................................................................................................................
+...................................................................................................................
+...............................................................................................................*/
 int main()
 {
 //Binary to decimal conversion and vice versa
@@ -2175,7 +2685,7 @@ switch(exp)
 // array intitialise
 //int arr[5]={1,3,5,6,7};
 //reverse array
-// time complexity   O -> Upper bound    theta -> avg case    omega -> lower bound
+// time complexity  Big(O) -> Upper bound   Big(theta) -> avg case    Big(omega) -> lower bound
 
 // binary search 
 /*
@@ -2441,11 +2951,16 @@ m[1]="bhavya";
 m.erase(1); -> removes key and value mapped to key 1
 m.insert({2,"shivansh"});
 for(auto i:m)
-    cout<<i.first<<" "<<i.second<<endl;
+    cout<<*i.first<<" "<<*i.second<<endl;
+    cout<<i->first<<" "<<i->second<<endl;
 */
 
 //Algorithms
 /*
+int val=count(vec.begin(),vec.end(),2);
+int val=accumulate(vec.begin(),vec.end(),0);
+int val=*max_element(vec.begin(),vec.end());
+int val=*min_element(vec.begin(),vec.end());
 cout<<binary_search(vec.begin(),vec.end(),5); gives 1 if present otherwise 0
 cout<<max(a,b);
 cout<<min(a,b);
@@ -2528,7 +3043,7 @@ Printvector(temp);
 //sorted rotated array or not
 /*
 int n=5;
-int arr[n]={3,4,5,1,2};
+int arr[n]={3,4,5,1,2}; 
 int cnt=0;
 for(int i=0; i<n-1; i++)
 {
@@ -2589,11 +3104,11 @@ for(int i=0; i<s1.size()/2; i++)
 cout<<"It is a palindrome";
 */
 
-//remove all faltu characters lowercase the string and check palindrome
+//remove all "faltu" characters lowercase the string and check palindrome
 //getline(cin,str); -> takes a line as input 
 /*
 string s1;
-getline(cin,s1);
+getline(cin,s1);    
 string ans="";
 for(int i=0; i<s1.size(); i++)
 {
@@ -2709,21 +3224,19 @@ cout<<"False";
 // s.erase(s.begin(),s.begin()+1); -> used for erasing elements (removes 1st element here)
 /*
 string s="aabbccddaaa";
-while(s.size()!=0 && s[0]==s[1])
-{ 
-    s.erase(s.begin(),s.begin()+1);
-    s.erase(s.begin(),s.begin()+1);
-}
-
-int i=1;
-while(i<s.size())
+int i=0;
+while(s.size()>1 && i>=0 && i+1<s.size())
 {
     if(s[i]==s[i+1])
     {
         s.erase(s.begin()+i,s.begin()+i+2);
+        i--;
+        if(i<0)
+            i=0;
         continue;
-    }    
-    i++;
+    }
+    else
+        i++;
 }
 cout<<s;
 */
@@ -2810,7 +3323,7 @@ while(l<=r && u<=d)
 }
 */
 
-//binary search in array
+//binary search in 2D array
 /*
 int row,col;
 row=3;
@@ -2852,13 +3365,17 @@ vector<bool> vec(n+1,true);
 vec[0]=false;
 vec[1]=false;
 int cnt=0;
-for(int i=0; i<=n; i++)
+for(int i=2; i<=n; i++)
 {
     if(vec[i])
     {
         cnt++;
-        for(int j=i*2; j<=n; j=j+i)
+        int j=i*i;
+        while(j<=n)
+        {
             vec[j]=false;
+            j=j+i;
+        }
     }
 }
 cout<<cnt;
@@ -2884,11 +3401,11 @@ else gcd=a;
 int lcm=a*b/gcd;
 cout<<lcm;
 */
-
+ 
 //pointers
 /*
 int a=5;
-int* p=&a;
+int *p=&a;
 cout<<p<<endl; //gives address of a
 cout<<*p<<endl; //gives value of a (dereferencing value at address of a)
 cout<<++p<<endl; //increases address by 4 cuz int takes 4 bytes
@@ -2903,14 +3420,25 @@ cout<<*arr<<endl;
 cout<<*(arr+1)<<endl;
 cout<<(*arr)+1<<endl;
 //int arr[] and int *arr will work same in functions
-//arr[i]=*(arr+i) god formula and concept
+//arr[i]=*(arr+i) Amazing concept
+*/
+
+//reference variables 
+/*
+Giving different names to same variable
+int i=5;
+int& j=i;
+j++ will also give 6 and i++ will also give 6
+Comes the concept of Pass by value and Pass by reference (Must Do)
 */
 
 //dynamic memory allocation
 /*
+stack memory(Static memory allocation)<Heap memory(Dynamic allocation)
+Stack memory gets free after completion of loop but not Heap memory
 int n=5;
-int *arr=new int[n]; //creates dynamic array of size 5
-int *i=new int; //creates dynamic integer
+int* arr=new int[n]; //creates dynamic array of size 5 
+int* i=new int; //creates dynamic integer (new int returns address which can be dereferenced with * operator)
 delete []arr; //deletes array space from heap
 delete i; //deletes integer space from heap
 
@@ -3035,7 +3563,7 @@ cout<<shubhi->age<<endl;
 //encapsulation -> all data members and functions are kept in private access modifier ->security increases, make class read only, code reusability
 //inheritance -> single, multi-level, multiple, hybrid, heirarchical
 //single -> simple inheritance
-//multi-level -> a inherits b and b inherits c
+//multi-level -> a inherits b and b inherits c.... 
 //multiple -> c inherits a and b both
 //heirarchical -> making a tree type of inheritance
 /*
@@ -3354,9 +3882,12 @@ BTPostOrderTraversal(root);
 */
 
 //Traversals using Stacks and Queues
+/*
 NodeBT* root=NULL;
 CreateBinaryTree(root);
 BTInorderTraversalUsingStack(root);
+BTPreorderTraversalUsingStack(root);
+*/
 
 //Traversals
 /*
@@ -3717,8 +4248,604 @@ root=Merge2BST(inans,0,n1+n2-1);
 BTInorderTraversal(root);
 */
 
+//Graphs
+/*
+Nodes->Entity that stores data, Edges->connect nodes
+inDegree->no. of nodes comming towards particular node
+outDegree->no. of nodes outgoing from particular node
+undirected graph->no direction of nodes (a-b-c)
+directed graph->direction is given for node (a->b->c)
+weighted graph->on edges weight will be given otherwise assume it to be 1 
+cyclic graph->cycles are present
+acyclic graph->no cycle formed
+graph->adjacency matrix, adjacency list
+*/
 
+//adjacency matrix-> making a 2d array of connections between nodes
+/*
+int n;
+cout<<"Enter no. of nodes"<<endl;
+int adjmatrix[n][n];
+for(int i=0; i<n; i++)
+{
+    for(int j=0; j<n; j++)
+        cin>>adjmatrix[i][j];
+}
+*/
+
+//adjacency list
+/*
+// map<int,vector<int>> adjlist;
+map<int,vector<pair<int,int>>> adjlist;
+int n;
+cout<<"Enter number of nodes"<<endl;
+cin>>n;
+int m;
+cout<<"Enter number of edges"<<endl;
+cin>>m;
+int direction;
+cout<<"Is the graph undirected?"<<endl;
+cin>>direction;
+// CreateAdjacencyList(adjlist,n,m,direction);
+CreateAdjacencyListWeighted(adjlist,n,m,direction);
+cout<<adjlist.size()<<endl;
+// PrintAdjacencyList(adjlist,n);
+PrintAdjacencyListWeighted(adjlist,n);
+cout<<endl;
+*/
+
+
+//BFS->Breadth first search
+/*
+//theory
+take a queue and map for visited of bool type
+take front node, pop it from queue
+mark it visited, print it 
+put all neighbours of node to queue
+//code
+vector<int> ans;
+map<int,bool> vis;
+for(auto i: adjlist)
+    vis[i.first]=false;
+
+for(int i=0; i<adjlist.size(); i++)
+{
+    if(!vis[i])
+        BFSInGraph(adjlist,vis,ans,i);
+}
+Printvector(ans);
+*/
+
+//DFS->Depth first search
+/*
+//theory
+traverse krna andar ki andar
+mark the node visited
+print it 
+iterate the next element of node if its not visited
+repeat the process
+*/
+//code
+/*
+vector<int> ans;
+map<int,bool> vis;
+for(auto i: adjlist)
+    vis[i.first]=false;
+
+for(int i=0; i<adjlist.size(); i++)
+{
+    if(!vis[i])
+        DFSInGraph(adjlist,vis,ans,i);
+}
+Printvector(ans);
+*/
+
+//Cycle detection in undirected graph using BFS
+/*
+//theory
+keep a extra data structure that is parent which stores parent of each node
+if a node reaches again which is visited and its parent is not current node, means cycle present
+//code
+map<int,bool> vis;
+for(auto i: adjlist)
+    vis[i.first]=false;
+
+for(int i=0; i<adjlist.size(); i++)
+{
+    if(!vis[i])
+    {   
+        bool ans=CycleDetectionUndirectedUsingBFS(adjlist,vis,i);
+        if(ans==true)
+        {
+            cout<<"Cycle present"<<endl;
+            return 0;
+        }
+    }
+}
+cout<<"cycle not present"<<endl;
+*/
+
+//cycle detection in undirected graph using DFS
+/*
+//theory is same as BFS bs traversal should be depth wise
+//code
+map<int,bool> vis;
+for(auto i: adjlist)
+    vis[i.first]=false;
+
+for(int i=0; i<adjlist.size(); i++)
+{
+    if(!vis[i])
+    {
+        bool ans=CycleDetectionUndirectedUsingDFS(adjlist,vis,i,-1);
+        if(ans)
+        {
+            cout<<"cycle present"<<endl;
+            return 0;
+        }
+    }
+}
+cout<<"cycle not present"<<endl;
+*/
+
+//cycle detection in directed graph using DFS
+/*
+//theory-> bs extra DFS visited array bhi maintain krna h
+jab backtrack hora ho tab DFSvisited ko wapas false krna h
+fir agar DFSvisited bhi true and and normal visited array bhi true h to cycle present h
+//code
+map<int,bool> vis;
+map<int,bool> dfsvis;
+for(auto i: adjlist)
+{
+    vis[i.first]=false;
+    dfsvis[i.first]=false;
+}
+for(int i=0; i<adjlist.size(); i++)
+{
+    if(!vis[i])
+    {
+        bool ans=CycleDetectionDirectedUsingDFS(adjlist,vis,dfsvis,i);
+        if(ans)
+        {
+            cout<<"Cycle present"<<endl;
+            return 0;
+        }
+    }
+}
+cout<<"Cycle not present"<<endl;
+*/
+
+//Topological Sort
+/*
+//theory
+only implemented on DAG->directed acyclic graph
+Logic->DFS
+use stack, while backtracking nodes, put it into stack
+the elements in stack are now a valid topological sort
+//code
+map<int,bool> vis;
+stack<int> st;
+for(int i=0; i<adjlist.size(); i++)
+    vis[i]=false;
+
+for(int i=0; i<adjlist.size(); i++)
+{
+    if(!vis[i])
+        TopologicalSortUsingDFS(adjlist,vis,st,i);
+    
+}
+PrintStack(st);
+*/
+
+//Topological sort using BFS (Kahn's Algorithm)
+/*
+//theory
+use a queue, no visited array required
+record indegree of all nodes, push all nodes with 0 indegree to queue
+take queue's front, pop it, store it in answer, update indegree of neighbours of front(do -- for them),
+if the indegree of any neighbour becomes 0, then push it to queue
+//code
+TopologicalSortUsingBFS(adjlist,n);
+*/
+
+//Shortest path in Undirected graph using bfs
+/*
+//theory
+make visited map, take a queue, take a parent storing map,
+form the parent map, and then traverse the parent map from destination to source to get the answer
+//code
+map<int,bool> vis;
+for(int i=0; i<n; i++)
+    vis[i]=false;
+int src,dest;
+cout<<"Enter source and destination"<<endl;
+cin>>src;
+cin>>dest;
+ShortestPathUndirectedUsingBFS(adjlist,vis,src,dest);
+*/
+
+// Shortest path in directed acyclic graph
+/*
+//theory
+find the topological sort first
+maintain a distance array, fill it with INT_MAX, traverse and update the values of distance
+watch video for understanding
+//code
+int src;
+cout<<"Enter source"<<endl;
+cin>>src;
+ShortestPathDirectedAcyclicGraphUsingDFS(adjlist,n,src);
+*/
+
+//Dijkstra's Algorithm for shortest path -> ****************
+/*
+//theory
+take a vis vector, take a priority queue min heap, take a distance vector with infinite values,
+start from source, push it to priority queue, update its distance to 0, if distance we found better distance than
+in distance array then update it and push it to queue
+//code
+int src;
+cout<<"Enter source node"<<endl;
+cin>>src;
+DijkstraAlgorithmUsingSet(adjlist,src);
+DijkstraAlgorithmUsingPriorityQueue(adjlist,src);
+*/
+
+
+
+
+//Dynamic Programming -> Based on choices and optimal decision
+// Memoization -> improving the storage for improving time complexity
+//Knapsack -> Fractional Knapsack, 0-1 Knapsack, Unbounded knapsack
+//0-1 Knapsack -> can only take an element once
+/*
+int n;
+cout<<"Enter no. of items"<<endl;
+cin>>n;
+vector<int> wt(n),val(n);
+int w;
+cout<<"Enter maximum weight of knapsack"<<endl;
+cin>>w;
+vector<vector<int>> dp(n+1,vector<int>(w+1,-1));
+int ans=DPZeroOneKnapsack(wt,val,w,0,dp); //memoized code
+cout<<ans;
+*/
+
+//for top down approach watch aditya verma video
+//memset(dp,-1,sizeof(dp)); ->initialises a vector,array any container -> kisko karna h, 
+//kitne se krna h, kitne size ka h
+
+//Subset sum problem
+/*
+int n;
+cout<<"Enter size of array"<<endl;
+cin>>n;
+vector<int> vec(n);
+cout<<"Enter array"<<endl;
+for(int i=0; i<n; i++)
+    cin>>vec[i];
+int sum;
+cout<<"Enter value of sum"<<endl;
+cin>>sum;
+vector<vector<int>> dp(100001,vector<int>(n+1,-1));
+bool ans=DPSubsetSumProblem(n-1,sum,vec,dp);
+cout<<ans;
+*/
+
+//equal sum partition
+/*
+int n;
+cout<<"Enter size of array"<<endl;
+cin>>n;
+vector<int> vec(n);
+int sum=0;
+for(int i=0; i<n; i++)
+{
+    cin>>vec[i];
+    sum+=vec[i];
+}
+if(sum%2!=0)
+{
+    cout<<false;
+    return 0;
+}
+vector<vector<int>> dp(sum+1,vector<int>(n+1,-1));
+bool ans=DPEqualSumPartition(vec,dp,sum,n-1,0);
+cout<<ans;
+*/
+
+//Count number of subset sum
+/*
+int n;
+cout<<"Enter size of array"<<endl;
+cin>>n;
+vector<int> vec(n);
+for(int i=0; i<n; i++)
+    cin>>vec[i];
+
+int k;
+cout<<"Enter value of sum"<<endl;
+cin>>k;
+vector<vector<int>> dp(n+1,vector<int>(k+1,-1));
+int ans=DPCountSubsetSum(vec,dp,n-1,k);
+cout<<ans;
+*/
+
+//Unbounded Knapsack -> can take any element any number of times
+//Rod cutting problem
+/*
+int n;
+cout<<"Enter size of array"<<endl;
+cin>>n;
+vector<int> price(n);
+for(int i=0; i<n; i++)
+    cin>>price[i];
+vector<int> length(n);
+for(int i=0; i<n; i++)
+    length[i]=i+1;
+
+int sum=n;
+vector<vector<int>> dp(n+1,vector<int>(sum+1,-1));
+int ans=RodCuttingDP(price,length,n-1,sum,dp);
+if(ans<0)  
+    cout<<0;
+else
+    cout<<ans;
+*/
+
+//Coin change problem -> maximum number of ways
+/*
+int N;
+cout<<"Enter the number of elements"<<endl;
+cin>>N;
+int coins[N];
+for(int i=0; i<N; i++)
+    cin>>coins[i];
+int sum=0;
+cout<<"Enter value of sum"<<endl;
+cin>>sum;
+vector<vector<long long int>> dp(N+1,vector<long long int>(sum+1,-1));
+long long int ans=CoinChangeWays(coins,N-1,sum,dp);
+cout<<ans;
+*/
+
+//Coin change problem -> minimum number of coins
+/*
+int n;
+cout<<"Enter number of elements"<<endl;
+cin>>n;
+int amount;
+cout<<"Enter the amount"<<endl;
+cin>>amount;
+vector<int> nums(n);
+for(int i=0; i<n; i++)
+    cin>>nums[i];
+vector<int> dp(amount+1,-1);
+int ans=MinimumNumberOfCoins(nums,amount,dp);
+if(ans==INT_MAX)
+    cout<<-1;
+else    
+    cout<<ans;
+*/
+
+//Longest common subsequence
+/*
+int x,y;
+cout<<"Enter size of strings"<<endl;
+cin>>x>>y;
+string s1,s2;
+cout<<"Enter strings"<<endl;
+cin>>s1;
+cin>>s2;
+vector<vector<int>> dp(x+1,vector<int>(y+1,0));
+int ans=LongestCommonSubsequence(x,y,s1,s2,dp);
+return ans;
+*/
+
+//Longest Common Substring
+/*
+int n,m;
+cout<<"Enter size of strings"<<endl;
+cin>>n>>m;
+string s1,s2;
+cout<<"Enter strings"<<endl;
+cin>>s1>>s2;
+int ans=longestCommonSubstring(s1,s2,n,m);
+cout<<ans;
+*/
+
+//Print Longest Common Subsequence
+/*
+int x,y;
+cout<<"Enter size of strings"<<endl;
+cin>>x>>y;
+string s1,s2;
+cout<<"Enter strings"<<endl;
+cin>>s1;
+cin>>s2;
+vector<vector<int>> dp(x+1,vector<int>(y+1,0));
+int check=LongestCommonSubsequence(x,y,s1,s2,dp);
+cout<<dp[x][y]<<endl;
+int i,j;
+i=x;
+j=y;
+string ans="";
+while(i>0 && j>0)
+{
+    if(s1[i-1] == s2[j-1])
+    {
+        ans.push_back(s1[i-1]);
+        cout<<i<<" "<<j<<endl;
+        i--;
+        j--;
+    }
+    else
+    {
+        if(dp[i][j-1]>dp[i-1][j])
+            j--;
+        else
+            i--;
+    }
+}
+reverse(ans.begin(),ans.end());
+cout<<ans;
+*/
+
+//Shortest Common supersequence
+/*
+string s1,s2;
+cout<<"Enter strings"<<endl;
+cin>>s1;
+cin>>s2;
+int x,y;
+x=s1.size();
+y=s2.size();
+vector<vector<int>> dp(x+1,vector<int>(y+1,0));
+int ans=LongestCommonSubsequence(x,y,s1,s2,dp);
+ans=x+y-ans;
+cout<<ans;
+*/
+
+//Minimum insertion deletion to make one string another
+/*
+string s1,s2;
+cout<<"Enter strings"<<endl;
+cin>>s1;
+cin>>s2;
+int x,y;
+x=s1.size();
+y=s2.size();
+vector<vector<int>> dp(x+1,vector<int>(y+1,0));
+int ans=LongestCommonSubsequence(x,y,s1,s2,dp);
+ans=x+y-2*ans;
+cout<<ans;
+*/
+
+//Longest palindromic subsequence
+/*
+string s1,s2;
+cout<<"Enter string"<<endl;
+cin>>s1;
+s2=s1;
+reverse(s2.begin(),s2.end());
+int x,y;
+x=s1.size();
+y=s2.size();
+vector<vector<int>> dp(x+1,vector<int>(y+1,0));
+cout<<s2<<endl;
+int ans=LongestCommonSubsequence(x,y,s1,s2,dp);
+cout<<ans;
+*/
+
+//Minimum of deletions to make a string palindrome -> only find LCS and subtract it from string length
+
+//Print shortest common subsequence
+/*
+string s1,s2;
+cout<<"Enter strings"<<endl;
+cin>>s1;
+cin>>s2;
+int x,y;
+x=s1.size();
+y=s2.size();
+vector<vector<int>> dp(x+1,vector<int>(y+1,0));
+int ans=LongestCommonSubsequence(x,y,s1,s2,dp);
+int i,j;
+i=x;
+j=y;
+string s="";
+while(i>0 && j>0)
+{
+    if(s1[i-1]==s2[j-1])
+    {
+        s.push_back(s1[i-1]);
+        i--;
+        j--;
+    }
+    else
+    {
+        if(dp[i][j-1]>dp[i-1][j])
+        {
+            s.push_back(s2[j-1]);
+            j--;
+        }
+        else
+        {
+            s.push_back(s1[i-1]);
+            i--;
+        }
+    }
+}
+while(i>0)
+{
+    s.push_back(s1[i-1]);
+    i--;
+}
+while(j>0)
+{
+    s.push_back(s2[j-1]);
+    j--;
+}
+reverse(s.begin(),s.end());
+cout<<s;
+*/
+
+//Longest Repeating subsequence
+/*
+string s1,s2;
+cout<<"Enter the string"<<endl;
+cin>>s1;
+s2=s1;
+vector<vector<int>> dp(s1.size()+1,vector<int>(s2.size()+1,0));
+for(int i=0; i<=s1.size(); i++)
+{
+    for(int j=0; j<=s2.size(); j++)
+    {
+        if(i==0 || j==0)
+            continue;
+        if(s1[i-1]==s2[j-1] && i!=j)
+            dp[i][j]=1+dp[i-1][j-1];
+        else
+            dp[i][j]=max(dp[i][j-1],dp[i-1][j]);
+    }
+}
+cout<<dp[s1.size()][s2.size()];
+*/
+
+//Sequence pattern matching -> only find LCS and if its is same as length of finding string return true
+// another method is greedy
+/*
+string A,B;
+cout<<"Enter the strings"<<endl;
+cin>>A>>B;
+map<char,set<int>> m;
+for(int i=0; i<B.size(); i++)
+    m[B[i]].insert(i);
+string s=A;
+int check=0;
+for(int i=0; i<A.size(); i++)
+{
+    for(auto j: m[A[i]])
+    {
+        if(j>=check)
+        {
+            check=j;
+            s[i]='0';
+            break;
+        }
+    }
+}
+for(int i=0; i<s.size(); i++)
+{
+    if(s[i]!='0')
+    {
+        cout<<false;
+        break;
+    }
+}
+cout<<true;
+*/
 
 return 0;
 }
-
